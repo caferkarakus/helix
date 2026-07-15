@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KBB Eğitim</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>KBB Eğitim</h1>
+    <nav class="tabs">
+      <button class="tab-btn active" data-section="ozetler">Özet Kartlar</button>
+      <button class="tab-btn" data-section="sorular">Sorular</button>
+      <button class="tab-btn" data-section="vakalar">Vaka Sunumları</button>
+      <button class="tab-btn" data-section="aciller">Aciller</button>
+    </nav>
+  </header>
+
+  <main id="content" class="content">
+    <section id="ozetler" class="section active"></section>
+    <section id="sorular" class="section"></section>
+    <section id="vakalar" class="section"></section>
+    <section id="aciller" class="section"></section>
+  </main>
+
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal">
+      <button id="modal-close" class="modal-close">&times;</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- İçerik verileri: yeni konu eklemek için bu dosyaları düzenlemeniz yeterli -->
+  <script src="assets/js/data/summary-cards.js"></script>
+  <script src="assets/js/data/questions.js"></script>
+  <script src="assets/js/data/cases.js"></script>
+  <script src="assets/js/data/emergencies.js"></script>
+
+  <!-- Uygulama mantığı -->
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
