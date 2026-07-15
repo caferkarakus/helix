@@ -9,6 +9,7 @@
   Alanlar:
     id          -> benzersiz kısa kod
     question    -> vaka/soru metni
+    category    -> assets/js/data/subspecialties.js içindeki "title" değerlerinden biriyle birebir aynı olmalı
     image       -> (opsiyonel) görsel dosya yolu
     options     -> şıklar (TUS'ta genelde 5 şık olur, A-E)
     answerIndex -> doğru şıkkın "options" dizisindeki sırası (0'dan başlar)
@@ -20,6 +21,7 @@ const TUS_QUESTIONS = [
     id: "tus-1",
     question:
       "35 yaşında erkek hasta, 2 gündür süren sağ kulakta ani işitme kaybı şikayetiyle başvuruyor. Otoskopik muayenesi doğal, odyometride sağ kulakta 45 dB'lik sensörinöral tipte işitme kaybı saptanıyor. Bu hasta için en uygun ilk tedavi yaklaşımı aşağıdakilerden hangisidir?",
+    category: "Otoloji ve Nörotoloji",
     image: "assets/images/icons/hearing-loss.svg",
     options: [
       "3 gün gözlem sonrası tekrar değerlendirme",
@@ -36,6 +38,7 @@ const TUS_QUESTIONS = [
     id: "tus-2",
     question:
       "16 yaşında erkek hasta, aylardır süren tek taraflı burun tıkanıklığı ve tekrarlayan epistaksis şikayetiyle başvuruyor. Muayenede nazofarinkste kolayca kanayan, vasküler görünümde bir kitle izleniyor. Bu hastada en olası tanı aşağıdakilerden hangisidir?",
+    category: "Rinoloji",
     image: "assets/images/icons/epistaxis.svg",
     options: [
       "Nazal polip",
@@ -52,6 +55,7 @@ const TUS_QUESTIONS = [
     id: "tus-3",
     question:
       "55 yaşında, 30 paket-yıl sigara öyküsü olan erkek hasta, 3 haftadır düzelmeyen ses kısıklığı şikayetiyle başvuruyor. Bu hastada ilk yapılması gereken değerlendirme aşağıdakilerden hangisidir?",
+    category: "Laringoloji",
     image: "assets/images/icons/throat.svg",
     options: [
       "Ampirik antibiyotik tedavisi başlanması",
@@ -68,6 +72,7 @@ const TUS_QUESTIONS = [
     id: "tus-4",
     question:
       "4 yaşında çocuk hasta, son 6 ayda 4 kez akut otitis media atağı geçirmiş ve muayenede bilateral orta kulak effüzyonu ile birlikte iletim tipi işitme kaybı saptanmıştır. Bu hasta için en uygun tedavi yaklaşımı aşağıdakilerden hangisidir?",
+    category: "Pediatrik Kulak Burun Boğaz",
     image: "assets/images/icons/ear.svg",
     options: [
       "Uzun süreli profilaktik antibiyotik tedavisi",

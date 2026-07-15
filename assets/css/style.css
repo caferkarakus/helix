@@ -71,6 +71,41 @@ body {
   font-weight: 600;
 }
 
+/* [hidden] öznitelikli öğeler her zaman gizli kalsın (.tabs gibi display
+   tanımlayan sınıflarla çakışmaması için açıkça belirtiyoruz) */
+.subspecialty-bar[hidden],
+.tabs[hidden] {
+  display: none;
+}
+
+.subspecialty-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.back-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.subspecialty-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
 .content {
   max-width: 960px;
   margin: 0 auto;
@@ -140,6 +175,36 @@ body {
 
 .card.emergency h3 {
   color: var(--danger);
+}
+
+/* Bölümler ana ekranı */
+.subspecialty-card {
+  position: relative;
+}
+
+.subspecialty-number {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary-dark);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  text-align: center;
 }
 
 /* Kart / modal görselleri */

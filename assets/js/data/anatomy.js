@@ -6,7 +6,7 @@
   Alanlar:
     id       -> benzersiz kısa kod
     title    -> kartta görünecek başlık
-    category -> etiket (örn: "Otoloji", "Rinoloji", "BBC")
+    category -> assets/js/data/subspecialties.js içindeki "title" değerlerinden biriyle birebir aynı olmalı
     image    -> şematik diyagram dosya yolu
     summary  -> kart üzerinde görünecek kısa özet (1-2 cümle)
     details  -> karta tıklanınca açılan pencerede gösterilecek bölümler
@@ -16,7 +16,7 @@ const ANATOMY = [
   {
     id: "anat-1",
     title: "Dış Kulak",
-    category: "Otoloji",
+    category: "Otoloji ve Nörotoloji",
     image: "assets/images/anatomy/dis-kulak.svg",
     summary: "Kulak kepçesi ve dış kulak yolundan oluşur; ses dalgalarını kulak zarına iletir.",
     details: [
@@ -33,7 +33,7 @@ const ANATOMY = [
   {
     id: "anat-2",
     title: "Orta Kulak",
-    category: "Otoloji",
+    category: "Otoloji ve Nörotoloji",
     image: "assets/images/anatomy/orta-kulak.svg",
     summary: "Kulak zarı ile iç kulak arasındaki hava dolu boşluk; kemikçik zinciri sesi güçlendirir.",
     details: [
@@ -50,7 +50,7 @@ const ANATOMY = [
   {
     id: "anat-3",
     title: "İç Kulak",
-    category: "Otoloji",
+    category: "Otoloji ve Nörotoloji",
     image: "assets/images/anatomy/ic-kulak.svg",
     summary: "Koklea (işitme) ve yarım daire kanalları (denge) burada yer alır.",
     details: [
@@ -84,7 +84,7 @@ const ANATOMY = [
   {
     id: "anat-5",
     title: "Farinks",
-    category: "BBC",
+    category: "Genel Kulak Burun Boğaz",
     image: "assets/images/anatomy/farinks.svg",
     summary: "Burun arkasından yemek borusuna kadar uzanan, üç bölgeye ayrılan ortak kanal.",
     details: [
@@ -101,7 +101,7 @@ const ANATOMY = [
   {
     id: "anat-6",
     title: "Larinks",
-    category: "BBC",
+    category: "Laringoloji",
     image: "assets/images/anatomy/larinks.svg",
     summary: "Ses tellerini barındıran, solunum yolunu koruyan organ; trakea ile devam eder.",
     details: [

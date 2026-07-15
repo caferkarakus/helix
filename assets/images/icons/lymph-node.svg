@@ -1,0 +1,11 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="96" fill="#e6f2f1" />
+  <!-- neck/shoulder silhouette -->
+  <path d="M75 40v30c0 12-8 18-8 30 0 16 14 26 33 26s33-10 33-26c0-12-8-18-8-30V40"
+        fill="none" stroke="#0f6e6e" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M40 165c8-20 28-32 60-32s52 12 60 32" fill="none" stroke="#0f6e6e" stroke-width="7" stroke-linecap="round" />
+  <!-- marked lymph nodes -->
+  <circle cx="80" cy="88" r="8" fill="none" stroke="#c62828" stroke-width="5" />
+  <circle cx="108" cy="100" r="10" fill="none" stroke="#c62828" stroke-width="5" />
+  <circle cx="92" cy="118" r="6" fill="none" stroke="#c62828" stroke-width="4" opacity="0.8" />
+</svg>

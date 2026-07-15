@@ -6,7 +6,7 @@
   Alanlar:
     id              -> benzersiz kısa kod
     title           -> acil durumun adı
-    category        -> etiket (örn: "Kulak", "Burun", "Boğaz", "Baş-Boyun")
+    category        -> assets/js/data/subspecialties.js içindeki "title" değerlerinden biriyle birebir aynı olmalı
     redFlags        -> alarm bulguları (madde madde)
     immediateAction -> ilk yaklaşım / yapılması gerekenler (madde madde)
 */
@@ -15,7 +15,7 @@ const EMERGENCIES = [
   {
     id: "em-1",
     title: "Peritonsiller Apse",
-    category: "BBC",
+    category: "Genel Kulak Burun Boğaz",
     redFlags: [
       "Trismus (ağız açmada kısıtlılık)",
       "'Sıcak patates' sesi (muffled voice)",
@@ -32,7 +32,7 @@ const EMERGENCIES = [
   {
     id: "em-2",
     title: "Anjiyoödem / Üst Havayolu Obstrüksiyonu",
-    category: "BBC",
+    category: "Genel Kulak Burun Boğaz",
     redFlags: [
       "Dudak, dil, farenks ödemi",
       "Stridor",
@@ -66,7 +66,7 @@ const EMERGENCIES = [
   {
     id: "em-4",
     title: "Yabancı Cisim Aspirasyonu",
-    category: "BBC",
+    category: "Pediatrik Kulak Burun Boğaz",
     redFlags: [
       "Ani başlayan öksürük, boğulma hissi",
       "Tek taraflı azalmış solunum sesleri",

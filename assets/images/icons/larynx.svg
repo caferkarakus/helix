@@ -1,0 +1,13 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="96" fill="#e6f2f1" />
+  <!-- epiglottis -->
+  <path d="M82 48c11-5 21-1 24 9-10 4-19 2-24-9z" fill="#0f6e6e" opacity="0.15" stroke="#0f6e6e" stroke-width="5" stroke-linejoin="round" />
+  <!-- box -->
+  <rect x="62" y="70" width="60" height="55" rx="14" fill="none" stroke="#0f6e6e" stroke-width="7" />
+  <!-- vocal cords -->
+  <path d="M70 92c10 6 18 6 28 0" fill="none" stroke="#0f6e6e" stroke-width="6" stroke-linecap="round" />
+  <path d="M70 100c10-6 18-6 28 0" fill="none" stroke="#0f6e6e" stroke-width="6" stroke-linecap="round" />
+  <!-- trachea rings -->
+  <path d="M66 130v34M92 130v40M118 130v34" fill="none" stroke="#0f6e6e" stroke-width="6" stroke-linecap="round" opacity="0.8" />
+  <path d="M56 145c22 8 66 8 88 0M56 160c22 8 66 8 88 0" fill="none" stroke="#0f6e6e" stroke-width="4" opacity="0.4" />
+</svg>

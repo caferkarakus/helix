@@ -6,6 +6,7 @@
   Alanlar:
     id          -> benzersiz kısa kod
     question    -> soru metni
+    category    -> assets/js/data/subspecialties.js içindeki "title" değerlerinden biriyle birebir aynı olmalı
     image       -> (opsiyonel) soruyla ilgili görsel dosya yolu
     options     -> şıklar (dizi, istediğiniz kadar şık ekleyebilirsiniz)
     answerIndex -> doğru şıkkın "options" dizisindeki sırası (0'dan başlar: ilk şık = 0)
@@ -16,6 +17,7 @@ const QUESTIONS = [
   {
     id: "q1",
     question: "Akut otitis media tanısında en sık görülen bulgu aşağıdakilerden hangisidir?",
+    category: "Otoloji ve Nörotoloji",
     image: "assets/images/icons/ear.svg",
     options: [
       "Timpanik membranda bombeleşme",
@@ -29,6 +31,7 @@ const QUESTIONS = [
   {
     id: "q2",
     question: "Centor kriterlerinden biri değildir?",
+    category: "Genel Kulak Burun Boğaz",
     image: "assets/images/icons/throat.svg",
     options: [
       "Ateş öyküsü",
@@ -42,6 +45,7 @@ const QUESTIONS = [
   {
     id: "q3",
     question: "BPPV'de tanı koydurucu manevra hangisidir?",
+    category: "Otoloji ve Nörotoloji",
     image: "assets/images/icons/vestibular.svg",
     options: [
       "Valsalva manevrası",

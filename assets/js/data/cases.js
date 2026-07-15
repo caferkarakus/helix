@@ -6,7 +6,7 @@
   Alanlar:
     id          -> benzersiz kısa kod
     title       -> vaka başlığı
-    category    -> etiket (örn: "Otoloji", "Rinoloji", "BBC")
+    category    -> assets/js/data/subspecialties.js içindeki "title" değerlerinden biriyle birebir aynı olmalı
     image       -> (opsiyonel) vakayla ilgili görsel dosya yolu
     presentation-> hastanın başvuru şikayeti/öyküsü
     examination -> muayene bulguları
@@ -18,7 +18,7 @@ const CASES = [
   {
     id: "case-1",
     title: "Ani İşitme Kaybı ile Başvuran Hasta",
-    category: "Otoloji",
+    category: "Otoloji ve Nörotoloji",
     image: "assets/images/icons/hearing-loss.svg",
     presentation: "45 yaşında erkek hasta, 2 gün önce fark ettiği sağ kulakta ani işitme azlığı ve çınlama şikayetiyle başvurdu. Vertigo tanımlamıyor.",
     examination: "Otoskopik muayene doğal. Weber testi sol kulağa lateralize, Rinne testi her iki kulakta pozitif (sensörinöral paterni düşündürüyor).",

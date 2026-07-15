@@ -1,0 +1,15 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="96" fill="#e6f2f1" />
+  <!-- round child face -->
+  <circle cx="100" cy="105" r="55" fill="none" stroke="#0f6e6e" stroke-width="7" />
+  <!-- tuft of hair -->
+  <path d="M85 52c0-10 8-16 15-16s15 6 15 16" fill="none" stroke="#0f6e6e" stroke-width="6" stroke-linecap="round" />
+  <!-- ears -->
+  <circle cx="46" cy="105" r="10" fill="none" stroke="#0f6e6e" stroke-width="6" />
+  <circle cx="154" cy="105" r="10" fill="none" stroke="#0f6e6e" stroke-width="6" />
+  <!-- eyes -->
+  <circle cx="82" cy="98" r="5" fill="#0f6e6e" />
+  <circle cx="118" cy="98" r="5" fill="#0f6e6e" />
+  <!-- smile -->
+  <path d="M80 122c8 10 32 10 40 0" fill="none" stroke="#0f6e6e" stroke-width="6" stroke-linecap="round" />
+</svg>
