@@ -113,6 +113,63 @@ function swipeChrome(count) {
   `;
 }
 
+/*
+  Bir soru dizisini kaydırmalı kart olarak çizer ve şık seçimini yönetir.
+  "sorular" ve "tus" bölümleri aynı etkileşimi kullandığı için ortaktır.
+*/
+function renderQuestionSwipe(container, items, introText) {
+  container.innerHTML = `
+    <p class="section-intro">${introText}</p>
+    <div class="swipe-wrap">
+      <div class="swipe-track">
+        ${items
+          .map(
+            (q) => `
+          <article class="swipe-card question-card" data-id="${q.id}">
+            ${cardThumb(q.image, q.question)}
+            <h3>${q.question}</h3>
+            <div class="options">
+              ${q.options
+                .map((opt, i) => `<button class="option-btn" data-index="${i}">${opt}</button>`)
+                .join("")}
+            </div>
+            <div class="explanation">${q.explanation}</div>
+          </article>`
+          )
+          .join("")}
+      </div>
+      ${swipeChrome(items.length)}
+    </div>
+  `;
+
+  container.querySelectorAll(".question-card").forEach((qCard) => {
+    const q = items.find((item) => item.id === qCard.dataset.id);
+    const buttons = qCard.querySelectorAll(".option-btn");
+    let answered = false;
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (answered) return;
+        answered = true;
+        const chosenIndex = Number(btn.dataset.index);
+
+        buttons.forEach((b) => {
+          const idx = Number(b.dataset.index);
+          if (idx === q.answerIndex) {
+            b.classList.add("correct");
+          } else if (idx === chosenIndex) {
+            b.classList.add("incorrect");
+          }
+        });
+
+        qCard.querySelector(".explanation").classList.add("visible");
+      });
+    });
+  });
+
+  setupSwipe(container.querySelector(".swipe-wrap"));
+}
+
 const RENDERERS = {
   ozetler(container) {
     container.innerHTML = `
@@ -173,54 +230,15 @@ const RENDERERS = {
   },
 
   sorular(container) {
-    container.innerHTML = `
-      <p class="section-intro">Kaydırarak sorular arasında gezinin, bir şıkka dokunarak cevabınızı kontrol edin.</p>
-      <div class="swipe-wrap">
-        <div class="swipe-track">
-          ${QUESTIONS.map(
-            (q) => `
-            <article class="swipe-card question-card" data-id="${q.id}">
-              ${cardThumb(q.image, q.question)}
-              <h3>${q.question}</h3>
-              <div class="options">
-                ${q.options
-                  .map((opt, i) => `<button class="option-btn" data-index="${i}">${opt}</button>`)
-                  .join("")}
-              </div>
-              <div class="explanation">${q.explanation}</div>
-            </article>`
-          ).join("")}
-        </div>
-        ${swipeChrome(QUESTIONS.length)}
-      </div>
-    `;
+    renderQuestionSwipe(container, QUESTIONS, "Kaydırarak sorular arasında gezinin, bir şıkka dokunarak cevabınızı kontrol edin.");
+  },
 
-    container.querySelectorAll(".question-card").forEach((qCard) => {
-      const q = QUESTIONS.find((item) => item.id === qCard.dataset.id);
-      const buttons = qCard.querySelectorAll(".option-btn");
-      let answered = false;
-
-      buttons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          if (answered) return;
-          answered = true;
-          const chosenIndex = Number(btn.dataset.index);
-
-          buttons.forEach((b) => {
-            const idx = Number(b.dataset.index);
-            if (idx === q.answerIndex) {
-              b.classList.add("correct");
-            } else if (idx === chosenIndex) {
-              b.classList.add("incorrect");
-            }
-          });
-
-          qCard.querySelector(".explanation").classList.add("visible");
-        });
-      });
-    });
-
-    setupSwipe(container.querySelector(".swipe-wrap"));
+  tus(container) {
+    renderQuestionSwipe(
+      container,
+      TUS_QUESTIONS,
+      "Kaydırarak sorular arasında gezinin, bir şıkka dokunarak cevabınızı kontrol edin. Bu bölümdeki sorular örnek amaçlıdır; gerçek çıkmış TUS soruları değildir."
+    );
   },
 
   vakalar(container) {
