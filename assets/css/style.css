@@ -31,8 +31,21 @@ body {
   z-index: 10;
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.brand-logo {
+  height: 36px;
+  width: auto;
+  display: block;
+}
+
 .topbar h1 {
-  margin: 0 0 12px 0;
+  margin: 0;
   font-size: 1.3rem;
 }
 
