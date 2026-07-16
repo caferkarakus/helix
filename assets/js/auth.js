@@ -89,7 +89,7 @@ function renderAuthArea(user) {
   if (user) {
     const verifiedBadge = user.emailVerified
       ? ""
-      : `<span class="auth-unverified">doğrulanmadı</span> <button id="resend-btn" class="link-btn" type="button">doğrulama e-postasını gönder</button>`;
+      : `<span class="auth-unverified" title="Doğrulama e-postası spam/gereksiz klasörüne düşebilir, orayı da kontrol edin.">doğrulanmadı</span> <button id="resend-btn" class="link-btn" type="button">doğrulama e-postasını gönder</button>`;
     const label = user.displayName || user.email;
     area.innerHTML = `
       <span class="auth-user" title="${user.email}">${label}</span>
@@ -105,7 +105,7 @@ function renderAuthArea(user) {
         resendBtn.textContent = "gönderiliyor…";
         try {
           await sendEmailVerification(user);
-          resendBtn.textContent = "gönderildi ✓";
+          resendBtn.textContent = "gönderildi ✓ (spam klasörünü de kontrol edin)";
         } catch (error) {
           resendBtn.textContent = authErrorMessage(error);
           resendBtn.disabled = false;
