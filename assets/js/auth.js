@@ -1,0 +1,116 @@
+/*
+  GİRİŞ / KAYIT (Firebase Authentication)
+  ----------------------------------------
+  Bu dosya, e-posta/şifre ile kayıt olma, giriş yapma ve çıkış yapmayı
+  yönetir. Firebase projesi değişirse (örn. yeni bir proje açarsanız)
+  sadece aşağıdaki FIREBASE_CONFIG nesnesini güncellemeniz yeterli.
+*/
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCroJ09HMKjeWaCYLlwHxjeGIexp2sP3MY",
+  authDomain: "helix-12378.firebaseapp.com",
+  projectId: "helix-12378",
+  storageBucket: "helix-12378.firebasestorage.app",
+  messagingSenderId: "124009523600",
+  appId: "1:124009523600:web:712d0b3807acf427adab15",
+  measurementId: "G-2D47FPN5HJ"
+};
+
+const app = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(app);
+
+const ERROR_MESSAGES = {
+  "auth/email-already-in-use": "Bu e-posta adresi zaten kayıtlı. Giriş yapmayı deneyin.",
+  "auth/invalid-email": "Geçerli bir e-posta adresi girin.",
+  "auth/weak-password": "Şifre en az 6 karakter olmalı.",
+  "auth/user-not-found": "Bu e-posta ile kayıtlı bir hesap bulunamadı.",
+  "auth/wrong-password": "Şifre hatalı.",
+  "auth/invalid-credential": "E-posta veya şifre hatalı.",
+  "auth/too-many-requests": "Çok fazla deneme yapıldı. Lütfen biraz sonra tekrar deneyin."
+};
+
+function authErrorMessage(error) {
+  return ERROR_MESSAGES[error.code] || "Bir şeyler ters gitti, lütfen tekrar deneyin.";
+}
+
+let mode = "signin"; // "signin" | "signup"
+
+function openAuthModal() {
+  document.getElementById("auth-error").hidden = true;
+  document.getElementById("auth-form").reset();
+  document.getElementById("auth-modal-overlay").classList.add("visible");
+}
+
+function closeAuthModal() {
+  document.getElementById("auth-modal-overlay").classList.remove("visible");
+}
+
+function setMode(newMode) {
+  mode = newMode;
+  document.querySelectorAll(".auth-tab-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.mode === mode);
+  });
+  document.getElementById("auth-submit-btn").textContent = mode === "signin" ? "Giriş Yap" : "Kayıt Ol";
+  document.getElementById("auth-error").hidden = true;
+}
+
+function renderAuthArea(user) {
+  const area = document.getElementById("auth-area");
+  if (user) {
+    area.innerHTML = `
+      <span class="auth-user" title="${user.email}">${user.email}</span>
+      <button id="logout-btn" class="back-btn" type="button">Çıkış</button>
+    `;
+    document.getElementById("logout-btn").addEventListener("click", () => signOut(auth));
+  } else {
+    area.innerHTML = `<button id="login-btn" class="login-btn" type="button">Giriş</button>`;
+    document.getElementById("login-btn").addEventListener("click", openAuthModal);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".auth-tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => setMode(btn.dataset.mode));
+  });
+
+  document.getElementById("auth-modal-close").addEventListener("click", closeAuthModal);
+  document.getElementById("auth-modal-overlay").addEventListener("click", (e) => {
+    if (e.target.id === "auth-modal-overlay") closeAuthModal();
+  });
+
+  document.getElementById("auth-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("auth-email").value.trim();
+    const password = document.getElementById("auth-password").value;
+    const errorEl = document.getElementById("auth-error");
+    const submitBtn = document.getElementById("auth-submit-btn");
+
+    errorEl.hidden = true;
+    submitBtn.disabled = true;
+
+    try {
+      if (mode === "signin") {
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+      }
+      closeAuthModal();
+    } catch (error) {
+      errorEl.textContent = authErrorMessage(error);
+      errorEl.hidden = false;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  onAuthStateChanged(auth, renderAuthArea);
+});

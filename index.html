@@ -13,7 +13,9 @@
         <img src="assets/images/icons/helix-mark.svg" alt="" class="brand-mark" />
         <span class="wordmark">Helix</span>
       </div>
-      <button class="login-btn" type="button">Giriş</button>
+      <div id="auth-area" class="auth-area">
+        <button class="login-btn" type="button">Giriş</button>
+      </div>
     </div>
     <div id="subspecialty-bar" class="subspecialty-bar" hidden>
       <button id="back-to-home" class="back-btn">‹ Bölümler</button>
@@ -46,6 +48,28 @@
     </div>
   </div>
 
+  <div id="auth-modal-overlay" class="modal-overlay">
+    <div class="modal auth-modal">
+      <button id="auth-modal-close" class="modal-close">&times;</button>
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" type="button" data-mode="signin">Giriş Yap</button>
+        <button class="auth-tab-btn" type="button" data-mode="signup">Kayıt Ol</button>
+      </div>
+      <form id="auth-form">
+        <label class="auth-field">
+          E-posta
+          <input type="email" id="auth-email" required />
+        </label>
+        <label class="auth-field">
+          Şifre
+          <input type="password" id="auth-password" required minlength="6" />
+        </label>
+        <p id="auth-error" class="auth-error" hidden></p>
+        <button type="submit" id="auth-submit-btn" class="auth-submit">Giriş Yap</button>
+      </form>
+    </div>
+  </div>
+
   <!-- İçerik verileri: yeni konu eklemek için bu dosyaları düzenlemeniz yeterli -->
   <script src="assets/js/data/subspecialties.js"></script>
   <script src="assets/js/data/summary-cards.js"></script>
@@ -57,5 +81,6 @@
 
   <!-- Uygulama mantığı -->
   <script src="assets/js/main.js"></script>
+  <script type="module" src="assets/js/auth.js"></script>
 </body>
 </html>
