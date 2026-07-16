@@ -607,6 +607,10 @@ body {
   color: var(--text-muted);
 }
 
+.auth-field[hidden] {
+  display: none;
+}
+
 .auth-field input {
   padding: 10px 12px;
   border: 1px solid var(--border);
