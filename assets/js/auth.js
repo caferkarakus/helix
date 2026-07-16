@@ -102,11 +102,12 @@ function renderAuthArea(user) {
     if (resendBtn) {
       resendBtn.addEventListener("click", async () => {
         resendBtn.disabled = true;
-        resendBtn.textContent = "gönderildi ✓";
+        resendBtn.textContent = "gönderiliyor…";
         try {
           await sendEmailVerification(user);
+          resendBtn.textContent = "gönderildi ✓";
         } catch (error) {
-          resendBtn.textContent = "doğrulama e-postasını gönder";
+          resendBtn.textContent = authErrorMessage(error);
           resendBtn.disabled = false;
         }
       });
