@@ -82,6 +82,8 @@ function setMode(newMode) {
   const isSignup = mode === "signup";
   document.getElementById("auth-username-field").hidden = !isSignup;
   document.getElementById("auth-username").required = isSignup;
+  document.getElementById("auth-password-confirm-field").hidden = !isSignup;
+  document.getElementById("auth-password-confirm").required = isSignup;
 }
 
 function renderAuthArea(user) {
@@ -136,6 +138,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitBtn = document.getElementById("auth-submit-btn");
 
     errorEl.hidden = true;
+
+    if (mode === "signup") {
+      const passwordConfirm = document.getElementById("auth-password-confirm").value;
+      if (password !== passwordConfirm) {
+        errorEl.textContent = "Şifreler birbiriyle uyuşmuyor.";
+        errorEl.hidden = false;
+        return;
+      }
+    }
+
     submitBtn.disabled = true;
 
     try {
