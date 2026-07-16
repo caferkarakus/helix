@@ -12,6 +12,7 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendEmailVerification,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
@@ -46,12 +47,27 @@ let mode = "signin"; // "signin" | "signup"
 
 function openAuthModal() {
   document.getElementById("auth-error").hidden = true;
+  document.getElementById("auth-success").hidden = true;
+  document.getElementById("auth-form").hidden = false;
+  document.querySelector(".auth-tabs").hidden = false;
   document.getElementById("auth-form").reset();
   document.getElementById("auth-modal-overlay").classList.add("visible");
 }
 
 function closeAuthModal() {
   document.getElementById("auth-modal-overlay").classList.remove("visible");
+}
+
+function showVerificationNotice(email) {
+  document.getElementById("auth-form").hidden = true;
+  document.querySelector(".auth-tabs").hidden = true;
+  const successEl = document.getElementById("auth-success");
+  successEl.innerHTML = `
+    <p>Kayıt başarılı! <strong>${email}</strong> adresine bir doğrulama bağlantısı gönderdik. Gelen kutunuzu (ve spam klasörünü) kontrol edip hesabınızı doğrulayın.</p>
+    <button type="button" class="auth-submit" id="auth-success-close">Kapat</button>
+  `;
+  successEl.hidden = false;
+  document.getElementById("auth-success-close").addEventListener("click", closeAuthModal);
 }
 
 function setMode(newMode) {
@@ -66,11 +82,29 @@ function setMode(newMode) {
 function renderAuthArea(user) {
   const area = document.getElementById("auth-area");
   if (user) {
+    const verifiedBadge = user.emailVerified
+      ? ""
+      : `<span class="auth-unverified">doğrulanmadı</span> <button id="resend-btn" class="link-btn" type="button">doğrulama e-postasını gönder</button>`;
     area.innerHTML = `
       <span class="auth-user" title="${user.email}">${user.email}</span>
+      ${verifiedBadge}
       <button id="logout-btn" class="back-btn" type="button">Çıkış</button>
     `;
     document.getElementById("logout-btn").addEventListener("click", () => signOut(auth));
+
+    const resendBtn = document.getElementById("resend-btn");
+    if (resendBtn) {
+      resendBtn.addEventListener("click", async () => {
+        resendBtn.disabled = true;
+        resendBtn.textContent = "gönderildi ✓";
+        try {
+          await sendEmailVerification(user);
+        } catch (error) {
+          resendBtn.textContent = "doğrulama e-postasını gönder";
+          resendBtn.disabled = false;
+        }
+      });
+    }
   } else {
     area.innerHTML = `<button id="login-btn" class="login-btn" type="button">Giriş</button>`;
     document.getElementById("login-btn").addEventListener("click", openAuthModal);
@@ -100,10 +134,12 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       if (mode === "signin") {
         await signInWithEmailAndPassword(auth, email, password);
+        closeAuthModal();
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const credential = await createUserWithEmailAndPassword(auth, email, password);
+        await sendEmailVerification(credential.user);
+        showVerificationNotice(email);
       }
-      closeAuthModal();
     } catch (error) {
       errorEl.textContent = authErrorMessage(error);
       errorEl.hidden = false;

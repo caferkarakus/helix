@@ -520,7 +520,44 @@ body {
 .auth-area {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.auth-unverified {
+  color: var(--coral);
+  font-size: 0.72rem;
+  background: rgba(226, 118, 95, 0.14);
+  padding: 3px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--header-text-muted);
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.link-btn:hover {
+  color: var(--header-text);
+}
+
+.link-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  text-decoration: none;
+}
+
+.auth-success p {
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0 0 18px 0;
 }
 
 .auth-user {
