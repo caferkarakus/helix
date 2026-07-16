@@ -9,6 +9,13 @@
   --text-muted: #5b6b70;
   --border: #e0e6e8;
   --radius: 10px;
+
+  /* Helix marka kimliği (header) */
+  --header-bg: #241b2e;
+  --header-text: #f5efe6;
+  --header-text-muted: rgba(245, 239, 230, 0.7);
+  --gold: #d9a441;
+  --coral: #e2765f;
 }
 
 * {
@@ -23,52 +30,117 @@ body {
 }
 
 .topbar {
-  background: var(--primary-dark);
-  color: white;
-  padding: 16px 24px;
+  background: var(--header-bg);
+  color: var(--header-text);
+  padding: 18px 24px;
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 10px;
 }
 
-.brand-logo {
-  height: 48px;
+.brand-mark {
+  height: 26px;
   width: auto;
   display: block;
 }
 
+.wordmark {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--header-text);
+  letter-spacing: 0.01em;
+}
+
+.login-btn {
+  background: var(--gold);
+  color: var(--header-bg);
+  border: none;
+  padding: 9px 22px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.login-btn:hover {
+  filter: brightness(1.06);
+}
+
 .tabs {
   display: flex;
-  gap: 8px;
+  gap: 22px;
   flex-wrap: wrap;
 }
 
 .tab-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  color: var(--header-text-muted);
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 0.15s;
+  font-size: 0.95rem;
+  position: relative;
 }
 
 .tab-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  color: var(--header-text);
 }
 
 .tab-btn.active {
-  background: white;
-  color: var(--primary-dark);
+  color: var(--header-text);
   font-weight: 600;
+}
+
+.tab-btn.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gold);
+}
+
+/* "Aciller" her zaman öne çıkar: kullanıcının gözü acil bir şey ararken
+   hemen buraya gitmeli, aktif sekme olup olmadığına bakılmaksızın. */
+.tab-btn[data-section="aciller"] {
+  color: var(--coral);
+}
+
+.tab-btn[data-section="aciller"]::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--coral);
+  margin-right: 7px;
+}
+
+.tab-btn[data-section="aciller"]:hover,
+.tab-btn[data-section="aciller"].active {
+  color: var(--coral);
+}
+
+.tab-btn[data-section="aciller"].active::after {
+  background: var(--coral);
 }
 
 /* [hidden] öznitelikli öğeler her zaman gizli kalsın (.tabs gibi display
@@ -82,13 +154,13 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .back-btn {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: white;
+  border: 1px solid rgba(245, 239, 230, 0.35);
+  color: var(--header-text);
   padding: 6px 14px;
   border-radius: 20px;
   cursor: pointer;
@@ -97,13 +169,14 @@ body {
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(245, 239, 230, 0.1);
 }
 
 .subspecialty-title {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
+  color: var(--header-text);
 }
 
 .content {
