@@ -61,10 +61,10 @@ function cardThumb(image, alt) {
 /*
   Bir öğe listesini Kanser Evrelemesi ile aynı sol menü / sağ içerik
   düzeninde çizer: soldaki menüden bir başlık seçilince o öğenin tam
-  içeriği sağdaki panelde gösterilir. "Özet Kartlar", "Anatomi", "Sorular",
-  "TUS", "Vaka Sunumları" ve "Aciller" sekmelerinin ortak iskeletidir.
+  içeriği sağdaki panelde gösterilir. "Özet Kartlar", "Anatomi" ve
+  "Aciller" sekmelerinin ortak iskeletidir.
 */
-function renderSidebarSection(container, { items, getTitle, getBody, afterRender, emptyText }) {
+function renderSidebarSection(container, { items, getTitle, getBody, afterRender, emptyText, startIndex = 0 }) {
   if (items.length === 0) {
     container.innerHTML = emptyState(emptyText);
     return;
@@ -95,7 +95,61 @@ function renderSidebarSection(container, { items, getTitle, getBody, afterRender
     select(Number(btn.dataset.index));
   });
 
-  select(0);
+  select(startIndex);
+}
+
+/*
+  Bir öğe listesini tek tek, "Sonraki / Önceki" ile ilerlenen ve hangi
+  alt başlıktan geldiği belli olmayan sıralı bir görünümde çizer.
+  "Sorular", "TUS" ve "Vaka Sunumları" sekmelerinin ortak iskeletidir.
+*/
+function renderSequentialSection(container, { items, getBody, afterRender, emptyText, startIndex = 0 }) {
+  if (items.length === 0) {
+    container.innerHTML = emptyState(emptyText);
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="sequential-wrap">
+      <div class="sequential-main"></div>
+      <div class="sequential-controls">
+        <button type="button" class="sequential-btn sequential-prev">‹ Önceki</button>
+        <span class="sequential-progress"></span>
+        <button type="button" class="sequential-btn sequential-next">Sonraki ›</button>
+      </div>
+    </div>
+  `;
+
+  const main = container.querySelector(".sequential-main");
+  const prevBtn = container.querySelector(".sequential-prev");
+  const nextBtn = container.querySelector(".sequential-next");
+  const progress = container.querySelector(".sequential-progress");
+  let index = Math.min(Math.max(startIndex, 0), items.length - 1);
+
+  function render() {
+    main.innerHTML = getBody(items[index]);
+    main.scrollTop = 0;
+    progress.textContent = `${index + 1} / ${items.length}`;
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === items.length - 1;
+    if (afterRender) afterRender(items[index], main);
+  }
+
+  prevBtn.addEventListener("click", () => {
+    if (index > 0) {
+      index -= 1;
+      render();
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (index < items.length - 1) {
+      index += 1;
+      render();
+    }
+  });
+
+  render();
 }
 
 function truncateText(text, maxLength) {
@@ -211,30 +265,32 @@ const CONTENT_RENDERERS = {
     });
   },
 
-  sorular(container) {
-    renderSidebarSection(container, {
-      items: filterByCategory(QUESTIONS),
-      getTitle: (q) => truncateText(q.question, 60),
+  sorular(container, focusId) {
+    const items = filterByCategory(QUESTIONS);
+    renderSequentialSection(container, {
+      items,
       getBody: questionBodyHTML,
       afterRender: wireQuestionCard,
-      emptyText: "Bu yan dal için henüz soru eklenmedi."
+      emptyText: "Bu yan dal için henüz soru eklenmedi.",
+      startIndex: focusId ? items.findIndex((q) => q.id === focusId) : 0
     });
   },
 
-  tus(container) {
-    renderSidebarSection(container, {
-      items: filterByCategory(TUS_QUESTIONS),
-      getTitle: (q) => truncateText(q.question, 60),
+  tus(container, focusId) {
+    const items = filterByCategory(TUS_QUESTIONS);
+    renderSequentialSection(container, {
+      items,
       getBody: questionBodyHTML,
       afterRender: wireQuestionCard,
-      emptyText: "Bu yan dal için henüz TUS sorusu eklenmedi."
+      emptyText: "Bu yan dal için henüz TUS sorusu eklenmedi.",
+      startIndex: focusId ? items.findIndex((q) => q.id === focusId) : 0
     });
   },
 
-  vakalar(container) {
-    renderSidebarSection(container, {
-      items: filterByCategory(CASES),
-      getTitle: (c) => c.title,
+  vakalar(container, focusId) {
+    const items = filterByCategory(CASES);
+    renderSequentialSection(container, {
+      items,
       getBody: (c) => `
         ${c.image ? `<div class="modal-thumb"><img src="${c.image}" alt="${c.title}" /></div>` : ""}
         <h2>${c.title}</h2>
@@ -255,7 +311,8 @@ const CONTENT_RENDERERS = {
           <ul>${c.discussion.map((d) => `<li>${d}</li>`).join("")}</ul>
         </div>
       `,
-      emptyText: "Bu yan dal için henüz vaka sunumu eklenmedi."
+      emptyText: "Bu yan dal için henüz vaka sunumu eklenmedi.",
+      startIndex: focusId ? items.findIndex((c) => c.id === focusId) : 0
     });
   },
 
@@ -622,7 +679,7 @@ function buildSearchIndex() {
 }
 
 function searchResultTitle(entry) {
-  return entry.title.length > 90 ? `${entry.title.slice(0, 90).trimEnd()}…` : entry.title;
+  return truncateText(entry.title, 90);
 }
 
 function runSiteSearch(query) {
@@ -683,8 +740,13 @@ function goToSearchResult(entry) {
 
   switchPrimary("bolumler");
   enterSubspecialty(entry.subspecialtyId);
-  switchSection(entry.type);
 
+  if (entry.type === "sorular" || entry.type === "tus" || entry.type === "vakalar") {
+    switchSection(entry.type, entry.id);
+    return;
+  }
+
+  switchSection(entry.type);
   const filtered = filterByCategory(SEARCH_TYPE_SOURCES[entry.type]);
   const index = filtered.findIndex((item) => item.id === entry.id);
   if (index === -1) return;
@@ -694,7 +756,7 @@ function goToSearchResult(entry) {
   if (btn) btn.click();
 }
 
-function switchSection(sectionId) {
+function switchSection(sectionId, focusId) {
   document.querySelectorAll("#content-tabs .tab-btn").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.section === sectionId);
   });
@@ -703,7 +765,7 @@ function switchSection(sectionId) {
   });
 
   const container = document.getElementById(sectionId);
-  CONTENT_RENDERERS[sectionId](container);
+  CONTENT_RENDERERS[sectionId](container, focusId);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
