@@ -238,8 +238,8 @@ function switchPrimary(view) {
     sec.classList.toggle("active", sec.id === view);
   });
 
-  if (view === "evreleme") {
-    CONTENT_RENDERERS.evreleme(document.getElementById("evreleme"));
+  if (view === "evreleme" || view === "hesaplayici") {
+    CONTENT_RENDERERS[view](document.getElementById(view));
   }
 }
 
@@ -445,23 +445,64 @@ const CONTENT_RENDERERS = {
     });
   },
 
+  /*
+    "Kanser Evrelemesi": AJCC bölüm sırasına göre REFERANS içerik (hesaplama
+    yapmaz). Önce paylaşılan N sistemi/evre deseni, ardından her alt bölge
+    kendi T/N kriterleri ve tedavi özetiyle listelenir.
+  */
   evreleme(container) {
+    const sortedSites = [...STAGING_SITES].sort((a, b) => a.order - b.order);
     container.innerHTML = `
       <p class="section-intro staging-disclaimer">${STAGING_DISCLAIMER}</p>
       <div class="grid">
-        ${STAGING_SITES.map(
-          (site) => `
+        <div class="card" data-chapter="shared-nodal">
+          <span class="tag">AJCC Bölüm 6</span>
+          <h3>${SHARED_NODAL_CHAPTER.title}</h3>
+          <p>Çoğu alt bölgede ortak kullanılan N kategorisi ve evre gruplama deseni.</p>
+        </div>
+        ${sortedSites
+          .map(
+            (site) => `
           <div class="card" data-id="${site.id}">
-            <span class="tag">AJCC 8. Baskı</span>
+            <span class="tag">AJCC Bölüm ${site.chapter}</span>
             <h3>${site.title}</h3>
             <p>${site.summary}</p>
           </div>`
-        ).join("")}
-        <div class="card staging-soon">
-          <span class="tag">Yakında</span>
-          <h3>Orofarinks, Larinks, Nazofarinks ve diğerleri</h3>
-          <p>AJCC'nin baş-boyun bölümündeki sıraya göre eklenmeye devam edilecek.</p>
-        </div>
+          )
+          .join("")}
+      </div>
+    `;
+
+    container.querySelector('[data-chapter="shared-nodal"]').addEventListener("click", openSharedNodalReference);
+
+    container.querySelectorAll(".card[data-id]").forEach((el) => {
+      el.addEventListener("click", () => {
+        const site = STAGING_SITES.find((s) => s.id === el.dataset.id);
+        openStagingReference(site);
+      });
+    });
+  },
+
+  /*
+    "Staging Calculator": alt bölge seçilir, ardından (varsa) cTNM/pTNM
+    seçimi ve T/N/M kategorileri seçilir; evre ve tedavi özeti anında
+    hesaplanır.
+  */
+  hesaplayici(container) {
+    const sortedSites = [...STAGING_SITES].sort((a, b) => a.order - b.order);
+    container.innerHTML = `
+      <p class="section-intro staging-disclaimer">${STAGING_DISCLAIMER} Aşağıdan bir alt bölge seçerek başlayın.</p>
+      <div class="grid">
+        ${sortedSites
+          .map(
+            (site) => `
+          <div class="card" data-id="${site.id}">
+            <span class="tag">AJCC Bölüm ${site.chapter}</span>
+            <h3>${site.title}</h3>
+            <p>${site.summary}</p>
+          </div>`
+          )
+          .join("")}
       </div>
     `;
 
@@ -474,66 +515,150 @@ const CONTENT_RENDERERS = {
   }
 };
 
-/*
-  Bir evreleme sitesi için interaktif T/N/M hesaplayıcısını modalde açar.
-  Girilen değerler her değiştiğinde recomputeStaging() sonucu günceller.
-*/
-function openStagingCalculator(site) {
+/* ---------- Kanser Evrelemesi: referans (salt okunur) görünümler ---------- */
+
+function stageTableRows(pattern) {
+  return pattern
+    .map(
+      (row) => `
+      <tr>
+        <td>${row.row}</td>
+        <td>${row.n0}</td>
+        <td>${row.n1}</td>
+        <td>${row.n2}</td>
+        <td>${row.n3}</td>
+      </tr>`
+    )
+    .join("");
+}
+
+function openSharedNodalReference() {
+  const ch = SHARED_NODAL_CHAPTER;
   openModal(`
-    <span class="modal-tag">AJCC 8. Baskı</span>
+    <span class="modal-tag">AJCC Bölüm 6</span>
+    <h2>${ch.title}</h2>
+    <div class="modal-section"><p>${ch.intro}</p></div>
+    <div class="modal-section">
+      <h4>Klinik N (cN)</h4>
+      <ul>${ch.nClinical.map((n) => `<li><strong>${n.code}</strong> — ${n.desc}</li>`).join("")}</ul>
+    </div>
+    <div class="modal-section">
+      <h4>Patolojik N (pN)</h4>
+      <ul>${ch.nPathological.map((n) => `<li><strong>${n.code}</strong> — ${n.desc}</li>`).join("")}</ul>
+    </div>
+    <div class="modal-section">
+      <h4>Paylaşımlı Evre Grubu Deseni</h4>
+      <div class="staging-table-wrap">
+        <table class="staging-table">
+          <thead><tr><th>T \\ N</th><th>N0</th><th>N1</th><th>N2</th><th>N3</th></tr></thead>
+          <tbody>${stageTableRows(ch.stagePattern)}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>Genel Kurallar</h4>
+      <ul>${ch.generalRules.map((r) => `<li>${r}</li>`).join("")}</ul>
+    </div>
+  `);
+}
+
+function openStagingReference(site) {
+  const nInfoC = stagingNInfo(site, "clinical");
+  const nInfoP = stagingNInfo(site, "pathological");
+  const hasCustomStageTables = !!(site.stageGroupClinical || site.stageGroupPathological);
+
+  openModal(`
+    <span class="modal-tag">AJCC Bölüm ${site.chapter}</span>
+    <h2>${site.title}</h2>
+    <div class="modal-section"><p>${site.summary}</p></div>
+    <div class="modal-section">
+      <h4>T — Primer Tümör</h4>
+      <ul>${site.tInfo.map((t) => `<li><strong>${t.code}</strong> — ${t.desc}</li>`).join("")}</ul>
+    </div>
+    <div class="modal-section">
+      <h4>N — Bölgesel Lenf Nodu ${site.nSystem === "shared" ? "(paylaşılan sistem)" : "(kendi sistemi)"}</h4>
+      <p class="staging-n-label">Klinik (cN)</p>
+      <ul>${nInfoC.map((n) => `<li><strong>${n.code}</strong> — ${n.desc}</li>`).join("")}</ul>
+      ${
+        !site.noPathologicalToggle
+          ? `<p class="staging-n-label">Patolojik (pN)</p><ul>${nInfoP.map((n) => `<li><strong>${n.code}</strong> — ${n.desc}</li>`).join("")}</ul>`
+          : ""
+      }
+    </div>
+    ${
+      hasCustomStageTables
+        ? ""
+        : `<div class="modal-section">
+      <h4>Evre Grubu</h4>
+      <p>Bu alt bölge <a href="#" class="staging-shared-link">paylaşılan evre gruplama desenini</a> kullanır (Tis→0, T1→I, T2→II, T3 veya N1→III, T4a veya N2→IVA, T4b veya N3→IVB, M1→IVC).</p>
+    </div>`
+    }
+    <div class="modal-section">
+      <h4>Evreye Göre Tedavi Yaklaşımı (NCCN genel mantığı — özet)</h4>
+      ${Object.entries(site.treatmentBySt)
+        .map(([stage, text]) => `<p><strong>Evre ${stage}:</strong> ${text}</p>`)
+        .join("")}
+    </div>
+    <p class="staging-disclaimer">${STAGING_DISCLAIMER}</p>
+  `);
+
+  const link = document.querySelector(".staging-shared-link");
+  if (link) {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      openSharedNodalReference();
+    });
+  }
+}
+
+/* ---------- Staging Calculator: interaktif hesaplayıcı ---------- */
+
+let calculatorMode = "clinical";
+
+function openStagingCalculator(site) {
+  calculatorMode = "clinical";
+  renderStagingCalculatorModal(site);
+}
+
+function renderStagingCalculatorModal(site) {
+  const nInfo = stagingNInfo(site, calculatorMode);
+  const showModeToggle = !site.noPathologicalToggle;
+
+  openModal(`
+    <span class="modal-tag">AJCC Bölüm ${site.chapter}</span>
     <h2>${site.title}</h2>
     <p class="staging-summary">${site.summary}</p>
+
+    ${
+      showModeToggle
+        ? `<div class="staging-mode-toggle" id="staging-mode-toggle">
+      <button type="button" class="staging-mode-btn${calculatorMode === "clinical" ? " active" : ""}" data-mode="clinical">cTNM (Klinik)</button>
+      <button type="button" class="staging-mode-btn${calculatorMode === "pathological" ? " active" : ""}" data-mode="pathological">pTNM (Patolojik)</button>
+    </div>`
+        : `<p class="staging-n-label">Bu alt bölgede klinik/patolojik N ayrımı kullanılmaz.</p>`
+    }
 
     <div class="staging-form" id="staging-form">
       <fieldset>
         <legend>T — Primer Tümör</legend>
-        <label class="staging-check">
-          <input type="checkbox" id="stg-tis" /> Karsinom in situ (Tis)
-        </label>
-        <div id="stg-size-fields">
-          <label class="staging-field">Tümör boyutu (cm)
-            <input type="number" id="stg-size" min="0" step="0.1" value="0" />
-          </label>
-          <label class="staging-field">İnvazyon derinliği - DOI (mm)
-            <input type="number" id="stg-doi" min="0" step="0.5" value="0" />
-          </label>
-          <label class="staging-field">İleri lokal invazyon
-            <select id="stg-invasion">
-              <option value="none">Yok</option>
-              <option value="t4a">Kortikal kemik / maksiller sinüs / yüz derisi (T4a)</option>
-              <option value="t4b">Çiğneme boşluğu / pterigoid / kafa tabanı / karotis (T4b)</option>
-            </select>
-          </label>
-        </div>
+        <select id="stg-t" class="staging-select">
+          ${site.tInfo.map((t) => `<option value="${t.code}">${t.code} — ${t.desc}</option>`).join("")}
+        </select>
       </fieldset>
 
       <fieldset>
         <legend>N — Bölgesel Lenf Nodu</legend>
-        <label class="staging-check">
-          <input type="checkbox" id="stg-has-nodes" /> Lenf nodu tutulumu var
-        </label>
-        <div id="stg-node-fields" hidden>
-          <label class="staging-field">Tutulum düzeni
-            <select id="stg-laterality">
-              <option value="single-ipsi">Tek taraflı, tek nod</option>
-              <option value="multiple-ipsi">Tek taraflı, birden fazla nod</option>
-              <option value="bilateral">Bilateral / karşı taraf</option>
-            </select>
-          </label>
-          <label class="staging-field">En büyük nod boyutu (cm)
-            <input type="number" id="stg-node-size" min="0" step="0.1" value="0" />
-          </label>
-          <label class="staging-check">
-            <input type="checkbox" id="stg-ene" /> Klinik olarak belirgin ekstranodal yayılım (ENE)
-          </label>
-        </div>
+        <select id="stg-n" class="staging-select" data-n-select>
+          ${nInfo.map((n) => `<option value="${n.code}">${n.code} — ${n.desc}</option>`).join("")}
+        </select>
       </fieldset>
 
       <fieldset>
         <legend>M — Uzak Metastaz</legend>
-        <label class="staging-check">
-          <input type="checkbox" id="stg-metastasis" /> Uzak metastaz mevcut
-        </label>
+        <select id="stg-m" class="staging-select">
+          <option value="M0">M0 — Uzak metastaz yok</option>
+          <option value="M1">M1 — Uzak metastaz var</option>
+        </select>
       </fieldset>
     </div>
 
@@ -542,35 +667,28 @@ function openStagingCalculator(site) {
     <p class="staging-disclaimer">${STAGING_DISCLAIMER}</p>
   `);
 
+  if (showModeToggle) {
+    document.querySelectorAll(".staging-mode-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        calculatorMode = btn.dataset.mode;
+        renderStagingCalculatorModal(site);
+      });
+    });
+  }
+
   const form = document.getElementById("staging-form");
-  form.addEventListener("input", () => recomputeStaging(site));
   form.addEventListener("change", () => recomputeStaging(site));
   recomputeStaging(site);
 }
 
 function recomputeStaging(site) {
-  const tis = document.getElementById("stg-tis").checked;
-  const size = document.getElementById("stg-size").value;
-  const doi = document.getElementById("stg-doi").value;
-  const invasion = document.getElementById("stg-invasion").value;
-  const hasNodes = document.getElementById("stg-has-nodes").checked;
-  const laterality = document.getElementById("stg-laterality").value;
-  const nodeSize = document.getElementById("stg-node-size").value;
-  const ene = document.getElementById("stg-ene").checked;
-  const metastasis = document.getElementById("stg-metastasis").checked;
+  const T = document.getElementById("stg-t").value;
+  const N = document.getElementById("stg-n").value;
+  const M = document.getElementById("stg-m").value;
 
-  document.getElementById("stg-size").disabled = tis;
-  document.getElementById("stg-doi").disabled = tis;
-  document.getElementById("stg-invasion").disabled = tis;
-  document.getElementById("stg-size-fields").classList.toggle("staging-disabled", tis);
-
-  document.getElementById("stg-node-fields").hidden = !hasNodes;
-
-  const T = site.computeT({ tis, size, doi, invasion });
-  const N = site.computeN({ hasNodes, laterality, nodeSize, ene });
-  const M = site.computeM({ metastasis });
-  const stage = site.stageGroup(T, N, M);
-  const treatment = site.treatmentBySt[stage] || "Evre hesaplanamadı.";
+  const groupFn = stagingGroupFn(site, calculatorMode);
+  const stage = groupFn(T, N, M);
+  const treatment = site.treatmentBySt[stage] || "Bu evre kombinasyonu için özet tanımlanmadı.";
 
   document.getElementById("staging-result").innerHTML = `
     <div class="staging-tnm">

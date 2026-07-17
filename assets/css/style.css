@@ -702,63 +702,80 @@ p.section-intro.staging-disclaimer {
   padding: 0 6px;
 }
 
-.staging-check {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-  color: var(--text);
-  margin-bottom: 12px;
-  cursor: pointer;
-}
-
-.staging-check input {
-  width: 16px;
-  height: 16px;
-}
-
-#stg-node-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-top: 4px;
-  border-top: 1px dashed var(--border);
-}
-
-.staging-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 12px;
-}
-
-.staging-field:last-child {
-  margin-bottom: 0;
-}
-
-.staging-field input,
-.staging-field select {
-  padding: 9px 11px;
+.staging-select {
+  width: 100%;
+  padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 0.9rem;
-  font-weight: 400;
   color: var(--text);
   background: white;
 }
 
-.staging-field input:focus,
-.staging-field select:focus {
+.staging-select:focus {
   outline: 2px solid var(--primary);
   outline-offset: 1px;
   border-color: var(--primary);
 }
 
-#stg-size-fields.staging-disabled {
-  opacity: 0.45;
+.staging-mode-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.staging-mode-btn {
+  flex: 1;
+  background: none;
+  border: 1px solid var(--border);
+  padding: 9px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.staging-mode-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+.staging-n-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  margin: 12px 0 4px 0;
+}
+
+.staging-table-wrap {
+  overflow-x: auto;
+}
+
+.staging-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.88rem;
+}
+
+.staging-table th,
+.staging-table td {
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.staging-table th {
+  background: #eef3f3;
+  color: var(--primary-dark);
+}
+
+.staging-shared-link {
+  color: var(--primary);
+  font-weight: 600;
 }
 
 .staging-result {
